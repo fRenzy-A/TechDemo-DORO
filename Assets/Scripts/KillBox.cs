@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class KillBox : MonoBehaviour
 {
-    [SerializeField] public Transform respawnPoint;
-    public Transform player;
+    Transform respawnPoint;
+    Transform players;
     // Start is called before the first frame update
     void Start()
     {
-
+        players = GameObject.Find("Player").GetComponent<Transform>();
+        respawnPoint = GameObject.Find("Respawn Point").GetComponent<Transform>();
     }
 
     // Update is called once per frame
@@ -23,7 +25,7 @@ public class KillBox : MonoBehaviour
         Debug.Log("Teleport");
         if (other.gameObject.CompareTag("Player"))
         {
-            player.transform.position = respawnPoint.transform.position;
+            players.transform.position = respawnPoint.transform.position;
         }
     }
 }
