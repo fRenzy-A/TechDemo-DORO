@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public Transform m_Camera;
+
     [Header("Movement")]
     public float movespeed = 6f;
+    public float crouchmovespeed = 2f;
     public float movementMultiplier = 10f;
+    public float dashstrength = 6f;
+    public float slideBoost = 4f;
     [SerializeField] float airMultiplier = 0.4f;
 
     [Header("Keybinds")]
     [SerializeField] KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] KeyCode crouchKey = KeyCode.LeftControl;
+    [SerializeField] KeyCode dashKey = KeyCode.LeftShift;
 
     [Header("Jumping")]
     public float jumpForce = 5f;
@@ -21,6 +28,11 @@ public class PlayerMovement : MonoBehaviour
 
     float playerHeight = 2f;
 
+    
+
+
+    public float crouch = -1f;
+
     float horizontalMovement;
     float verticalMovemement;
     
@@ -29,7 +41,6 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
 
     Rigidbody rb;
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -47,6 +58,26 @@ public class PlayerMovement : MonoBehaviour
         {
             Jump();
         }
+
+        if (Input.GetKeyDown(crouchKey))
+        {        
+            Crouch();
+        }
+        else if (Input.GetKeyUp(crouchKey) && isGrounded)
+        {
+            Stand();
+        }
+        else if (Input.GetKeyUp(crouchKey) && isGrounded == false)
+        {
+            Stand();
+        }
+
+        if (Input.GetKeyDown(dashKey))
+        {
+            Dash();
+        }
+
+
     }
 
     void MyInput()
@@ -60,6 +91,32 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+
+    void Crouch()
+    {
+        
+        if (rb.velocity.magnitude != 0 && isGrounded)
+        {
+            rb.AddForce(moveDirection.normalized * movespeed * slideBoost, ForceMode.Impulse);
+        }
+        m_Camera.transform.Translate(0,-0.5f, 0);      
+    }
+    void Stand()
+    {
+        m_Camera.transform.Translate(0, 0.5f, 0);
+    }
+
+    void Dash()
+    {
+        if (isGrounded)
+        {
+            rb.AddForce(moveDirection.normalized * movespeed * dashstrength, ForceMode.VelocityChange);
+        }
+        else if (isGrounded == false)
+        {
+            rb.AddForce(moveDirection.normalized * movespeed * airMultiplier * dashstrength, ForceMode.VelocityChange);
+        }
     }
 
     void ControlDrag()
