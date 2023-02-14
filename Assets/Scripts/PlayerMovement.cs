@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
 
     Rigidbody rb;
+    public BoxCollider hitbox;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -76,8 +77,6 @@ public class PlayerMovement : MonoBehaviour
         {
             Dash();
         }
-
-
     }
 
     void MyInput()
@@ -94,17 +93,21 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Crouch()
-    {
-        
+    {       
         if (rb.velocity.magnitude != 0 && isGrounded)
         {
             rb.AddForce(moveDirection.normalized * movespeed * slideBoost, ForceMode.Impulse);
         }
-        m_Camera.transform.Translate(0,-0.5f, 0);      
+        m_Camera.transform.Translate(0,-0.5f, 0);
+
+        hitbox.center = new Vector3(0, -0.5f,0);
+        hitbox.size = new Vector3(0.75f, 1, 0.75f);
     }
     void Stand()
     {
         m_Camera.transform.Translate(0, 0.5f, 0);
+        hitbox.center = new Vector3(0, 0, 0);
+        hitbox.size = new Vector3(0.75f, 2, 0.75f);
     }
 
     void Dash()
