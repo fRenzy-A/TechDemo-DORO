@@ -9,10 +9,18 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     public float movespeed = 6f;
     public float crouchmovespeed = 2f;
-    public float movementMultiplier = 10f;
-    public float dashstrength = 6f;
+    public float movementMultiplier = 10f;    
     public float slideBoost = 4f;
     [SerializeField] float airMultiplier = 0.4f;
+
+    [Header("Dash")]
+    public float dashstrength = 6f;
+    public float dashCDValue = 1.0f;
+    public float dashCD = 0.0f;
+    public float slideCDValue = 2.0f;
+    public float slideCD = 0.0f;
+    public bool canDash = true;
+    public bool canSlideBoost = true;
 
     [Header("Keybinds")]
     [SerializeField] KeyCode jumpKey = KeyCode.Space;
@@ -42,10 +50,12 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody rb;
     public BoxCollider hitbox;
+    public Transform orientation;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        dashCD = dashCDValue;
     }
 
     private void Update()
@@ -59,7 +69,6 @@ public class PlayerMovement : MonoBehaviour
         {
             Jump();
         }
-
         if (Input.GetKeyDown(crouchKey))
         {        
             Crouch();
@@ -68,23 +77,45 @@ public class PlayerMovement : MonoBehaviour
         {
             Stand();
         }
-        else if (Input.GetKeyUp(crouchKey) && isGrounded == false)
+        else if (Input.GetKeyUp(crouchKey) && !isGrounded)
         {
             Stand();
         }
-
         if (Input.GetKeyDown(dashKey))
         {
             Dash();
         }
+        if (!canDash)
+        {
+            DashCooldown();
+        }
+        if (!canSlideBoost)
+        {
+            SlideBoostCoolDown();
+        }
     }
 
+    private void FixedUpdate()
+    {
+        MovePlayer();
+    }
     void MyInput()
     {
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovemement = Input.GetAxisRaw("Vertical");
 
         moveDirection = transform.forward * verticalMovemement + transform.right * horizontalMovement;
+    }
+    void ControlDrag()
+    {
+        if (isGrounded)
+        {
+            rb.drag = groundDrag;
+        }
+        else
+        {
+            rb.drag = airDrag;
+        }
     }
 
     void Jump()
@@ -94,9 +125,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Crouch()
     {       
+
         if (rb.velocity.magnitude != 0 && isGrounded)
         {
-            rb.AddForce(moveDirection.normalized * movespeed * slideBoost, ForceMode.Impulse);
+            rb.AddForce(movespeed * slideBoost * moveDirection.normalized, ForceMode.Impulse);
+            canSlideBoost = false;
         }
         m_Camera.transform.Translate(0,-0.5f, 0);
 
@@ -112,32 +145,48 @@ public class PlayerMovement : MonoBehaviour
 
     void Dash()
     {
-        if (isGrounded)
+        if (canDash)
         {
-            rb.AddForce(moveDirection.normalized * movespeed * dashstrength, ForceMode.VelocityChange);
+            if (rb.velocity.magnitude == 0 && isGrounded)
+            {
+                rb.AddForce(orientation.forward * dashstrength * movespeed , ForceMode.VelocityChange);
+            }
+            else if (isGrounded)
+            {
+                rb.AddForce(moveDirection.normalized * movespeed * dashstrength, ForceMode.VelocityChange);
+            }
+
+            else if (isGrounded == false)
+            {
+                rb.AddForce(moveDirection.normalized * movespeed * airMultiplier * dashstrength, ForceMode.VelocityChange);
+            }
+            
+            canDash = false;
         }
-        else if (isGrounded == false)
+        
+        
+        
+    }
+    void DashCooldown()
+    {
+        dashCD -= Time.deltaTime;
+        if (dashCD <= 0)
         {
-            rb.AddForce(moveDirection.normalized * movespeed * airMultiplier * dashstrength, ForceMode.VelocityChange);
+            canDash = true;
+            dashCD = dashCDValue;
         }
     }
 
-    void ControlDrag()
+    void SlideBoostCoolDown()
     {
-        if (isGrounded)
+        slideCD -= Time.deltaTime;
+        if (slideCD <= 0)
         {
-            rb.drag = groundDrag;
-        }
-        else
-        {
-            rb.drag = airDrag;
+            canSlideBoost = true;
+            slideCD = slideCDValue;
         }
     }
 
-    private void FixedUpdate()
-    {
-        MovePlayer();
-    }
 
     void MovePlayer()
     {

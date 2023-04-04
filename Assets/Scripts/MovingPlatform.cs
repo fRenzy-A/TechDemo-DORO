@@ -24,7 +24,7 @@ public class MovingPlatform : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         float time = Mathf.PingPong(Time.time * speed, 1);
         transform.position = Vector3.Lerp(left, right, time);
