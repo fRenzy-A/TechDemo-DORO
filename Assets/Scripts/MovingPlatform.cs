@@ -4,14 +4,23 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
+    [Header("Platform Speed")]
     public float speed = 0.5f;
-    public float leftMax = -6f;
-    public float rightMax = 6f;
+    [Header("Platform Distance:Horizontal")]
+    public bool isPlatformMovingHorizontally = false;
+    public float leftMax;
+    public float rightMax;
+    [Header("Platform Distance:Vertical")]
+    public bool isPlatformMovingVertically = false;
+    public float topMax;
+    public float bottomMax;
+
     float originalPos;
 
     Vector3 left;
     Vector3 right;
-
+    Vector3 up;
+    Vector3 down;
     public GameObject players;
     // Start is called before the first frame update
     void Start()
@@ -19,7 +28,8 @@ public class MovingPlatform : MonoBehaviour
         originalPos = gameObject.transform.position.x;
         left = new Vector3(originalPos + leftMax,gameObject.transform.position.y,gameObject.transform.position.z);
         right = new Vector3(originalPos + rightMax, gameObject.transform.position.y, gameObject.transform.position.z);
-
+        up = new Vector3(originalPos + gameObject.transform.position.x, topMax, gameObject.transform.position.z);
+        down = new Vector3(originalPos + gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
         //players = GameObject.Find("Player").GetComponent<GameObject>();
     }
 
@@ -27,7 +37,20 @@ public class MovingPlatform : MonoBehaviour
     void FixedUpdate()
     {
         float time = Mathf.PingPong(Time.time * speed, 1);
-        transform.position = Vector3.Lerp(left, right, time);
+        if (isPlatformMovingHorizontally)
+        {
+            transform.position = Vector3.Lerp(left, right, time);
+        }
+        else if (isPlatformMovingVertically)
+        {
+            transform.position = Vector3.Lerp(up, down, time);
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(left, right, time);
+            transform.position = Vector3.Lerp(up, down, time);
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)

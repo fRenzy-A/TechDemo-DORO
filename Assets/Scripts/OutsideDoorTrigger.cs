@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class OutsideDoorTrigger : MonoBehaviour
 {
-    public bool openThisDoor;
+    public bool openThisDoor = false;
     // Update is called once per frame
     void Start()
     {
-
-        openThisDoor = false;
+        
     }
     void Update()
     {
@@ -21,5 +20,10 @@ public class OutsideDoorTrigger : MonoBehaviour
         {
             openThisDoor = true;
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        openThisDoor = false;
     }
 }

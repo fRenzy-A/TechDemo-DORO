@@ -338,6 +338,7 @@ MonoBehaviour:
   bottom: -6
   isDoorTriggeredOutside: 0
   outsideDoorTrigger: {fileID: 0}
+  doorDelayTime: 0
   doorOpenSpeed: 2
   doorOpen: 0
 --- !u!65 &260707462
@@ -503,7 +504,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 622766632}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.2688136, y: -0.21, z: -3.82}
+  m_LocalPosition: {x: -18.45, y: -0.21, z: -3.82}
   m_LocalScale: {x: 4.2439, y: 4.2439, z: 4.2439}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1416,7 +1417,7 @@ MonoBehaviour:
   movespeed: 6
   crouchmovespeed: 2
   movementMultiplier: 10
-  slideBoost: 3
+  slideBoost: 5
   airMultiplier: 0.4
   dashstrength: 5
   dashCDValue: 1
@@ -1900,7 +1901,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909346670}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.73, y: 1.83, z: -3.82}
+  m_LocalPosition: {x: 3.5488129, y: 1.83, z: -3.82}
   m_LocalScale: {x: 4.2439, y: 4.2439, z: 4.2439}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1987,7 +1988,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1956102353}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.34, y: 1.93, z: -4.23}
+  m_LocalPosition: {x: -13.521187, y: 1.93, z: -4.23}
   m_LocalScale: {x: 3.3335, y: 0.19970296, z: 3.3335}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2007,8 +2008,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.5
+  isPlatformMovingHorizontally: 0
   leftMax: -6
   rightMax: 6
+  isPlatformMovingVertically: 1
+  topMax: 6
+  bottomMax: -6
   players: {fileID: 1529893102}
 --- !u!65 &1956102359
 BoxCollider:
@@ -2280,7 +2285,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2004276115}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.2688136, y: -1.09, z: -7.61}
+  m_LocalPosition: {x: -18.45, y: -1.09, z: -7.61}
   m_LocalScale: {x: 4.2439, y: 4.2439, z: 4.2439}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2329,6 +2334,7 @@ MonoBehaviour:
   bottom: -6
   isDoorTriggeredOutside: 1
   outsideDoorTrigger: {fileID: 2047062573}
+  doorDelayTime: 1
   doorOpenSpeed: 2
   doorOpen: 0
 --- !u!65 &2038923461

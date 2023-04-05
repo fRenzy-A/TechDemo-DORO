@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    BoxCollider doorTrigger;
     public Transform door;
     [Header("Door Open Height")]
     public float top = 6f;
     public float bottom = -6f;
-
     [Header("Outside Triggers")]
     public bool isDoorTriggeredOutside = false;
     public OutsideDoorTrigger outsideDoorTrigger;
-
+    [Header("Door Delay")]
+    public float doorDelayTime;
+    float delayCD;
+    [Header("Door Speed")]
     public float doorOpenSpeed = 2.0f;
 
 
@@ -22,11 +23,10 @@ public class Door : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-
+        
     }
     void Start()
     {
-        outsideDoorTrigger = GetComponent<OutsideDoorTrigger>();
         originalPos = door.transform.position.y;
         top = door.transform.position.y + 4;
     }
@@ -36,19 +36,25 @@ public class Door : MonoBehaviour
     {
         if (isDoorTriggeredOutside)
         {
-            doorTrigger.enabled = false;
-            if (outsideDoorTrigger.openThisDoor)
+            //doorTrigger.enabled = false;
+            GetComponent<BoxCollider>().enabled = false;
+            if (outsideDoorTrigger.openThisDoor == true)
             {
                 if (door.transform.position.y <= top)
                 {
+                    delayCD = doorDelayTime;
                     door.transform.Translate(0, top * (Time.deltaTime * doorOpenSpeed), 0);
                 }
             }
-            else if (!outsideDoorTrigger.openThisDoor)
+            else if (outsideDoorTrigger.openThisDoor == false)
             {
                 if (door.transform.position.y >= originalPos)
                 {
-                    door.transform.Translate(0, bottom * (Time.deltaTime * doorOpenSpeed), 0);
+                    delayCD -= Time.deltaTime;
+                    if (delayCD <= 0)
+                    {
+                        door.transform.Translate(0, bottom * (Time.deltaTime * doorOpenSpeed), 0);
+                    }                
                 }
             }
         }

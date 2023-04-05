@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     public float movespeed = 6f;
+    float outofCrouch;
     public float crouchmovespeed = 2f;
     public float movementMultiplier = 10f;    
     public float slideBoost = 4f;
@@ -53,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform orientation;
     private void Start()
     {
+        outofCrouch = movespeed;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         dashCD = dashCDValue;
@@ -65,12 +67,13 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         ControlDrag();
 
+
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             Jump();
         }
         if (Input.GetKeyDown(crouchKey))
-        {        
+        {
             Crouch();
         }
         else if (Input.GetKeyUp(crouchKey) && isGrounded)
@@ -93,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
         {
             SlideBoostCoolDown();
         }
+        
     }
 
     private void FixedUpdate()
@@ -124,20 +128,26 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Crouch()
-    {       
+    {
+        if (canSlideBoost && rb.velocity.magnitude != 0 ) SlideBoost();
 
-        if (rb.velocity.magnitude != 0 && isGrounded)
-        {
-            rb.AddForce(movespeed * slideBoost * moveDirection.normalized, ForceMode.Impulse);
-            canSlideBoost = false;
-        }
+        movespeed = crouchmovespeed;
         m_Camera.transform.Translate(0,-0.5f, 0);
 
         hitbox.center = new Vector3(0, -0.5f,0);
         hitbox.size = new Vector3(0.75f, 1, 0.75f);
     }
+    void SlideBoost()
+    {
+        if (rb.velocity.magnitude != 0 && isGrounded)
+        {
+            rb.AddForce(movespeed * slideBoost * moveDirection.normalized, ForceMode.Impulse);
+            canSlideBoost = false;
+        }
+    }
     void Stand()
     {
+        movespeed = outofCrouch;
         m_Camera.transform.Translate(0, 0.5f, 0);
         hitbox.center = new Vector3(0, 0, 0);
         hitbox.size = new Vector3(0.75f, 2, 0.75f);
